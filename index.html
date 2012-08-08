@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>exhistory test page</title>
+        <script type='text/javascript' src='exhistory.js'></script>
+        <script type='text/javascript'>
+          window.onpopstate = function(event) {
+            setState(event.state);
+          };
+          window.setElementText = function(id, text) {
+	    var elem = document.getElementById(id);
+            while(elem.childNodes.length >= 1) {
+              elem.removeChild(elem.firstChild);
+            }
+            elem.appendChild(elem.ownerDocument.createTextNode(text));
+          };
+	  window.setState = function(state) {
+            setElementText("state", state);
+	  };
+          window.pushState = function(state, title, url) {
+            history.pushState(state, title, url);
+            console.log(state);
+            setState(state);
+          };
+        </script>
+        <style>
+          div#state {
+            display: inline-block;
+            width: 35px;
+            height: 25px;
+            padding: 10px;
+            border: solid 1px black;
+            color: red;
+          }
+        </style>
+    </head>
+    <body>
+        <h1>exhistory test page</h1>
+        <div id="state"></div>
+        <p>
+          <button onclick='pushState("foo", "foo", "foo");'>foo</button>
+          <button onclick='pushState("bar", "bar", "bar");'>bar</button>
+	</p>
+    </body>
+</html>
