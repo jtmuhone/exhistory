@@ -27,25 +27,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     if (typeof window.history.pushState !== "function") {
 	history.enablePopstate = true;
 
-	var historyInit = (function() {
-		if (! window.sessionStorage.getItem("exhistory.states")) {
-		    window.sessionStorage.setItem("exhistory.states", "{}");
-		}
-	    });
-		
 	var historyHashchange = (function() {
 		if ("onpopstate" in window &&
 		    location.hash.indexOf("#!/") == 0) {
 		    if (history.enablePopstate) {
 			var states = JSON.parse(window.sessionStorage.getItem("exhistory.states"));
-			window.onpopstate({state: states[location.hash]});
+			if (states) {
+			    window.onpopstate({state: states[location.hash]});
+			}
 		    } else {
 			history.enablePopstate = true;
 		    }
 		}
 	    });
     
-	window.addEventListener("load", historyInit, false);
 	window.addEventListener("hashchange", historyHashchange, false);
 
 	window.history.pushState = function(data, title, url) {
@@ -59,7 +54,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	    } else {
 		var fullUrl = "#!/" + url;
 	    }
-	    var states = JSON.parse(sessionStorage.getItem("exhistory.states"));
+	    if (window.sessionStorage.getItem("exhistory.states")) {
+		var states = JSON.parse(sessionStorage.getItem("exhistory.states"));
+	    } else {
+		var states = {};
+	    }
 	    states[fullUrl] = data;
 	    window.sessionStorage.setItem("exhistory.states", JSON.stringify(states));
 	    history.enablePopstate = false;

@@ -25,7 +25,7 @@
         <style>
           div#state {
             display: inline-block;
-            width: 60px;
+            width: 80px;
             height: 25px;
             padding: 10px;
             border: solid 1px black;
@@ -39,6 +39,7 @@
         <p>
           <button onclick='pushState("state:foo", "foo", "foo");'>foo</button>
           <button onclick='pushState("state:bar", "bar", "bar");'>bar</button>
+          <button onclick='pushState(null, "null", "null");'>null</button>
 	</p>
     </body>
 </html>
