@@ -3,7 +3,6 @@ if (typeof window.history.pushState !== "function") {
     history.enablePopstate = true;
     if (! sessionStorage.getItem("exhistory.states")) {
         sessionStorage.setItem("exhistory.states", "{}");
-        console.log("Init states");
     }
     window.addEventListener("hashchange",
 			    (function () {
