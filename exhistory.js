@@ -28,11 +28,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	history.enablePopstate = true;
 
 	var historyHashchange = (function() {
-		if ("onpopstate" in window &&
-		    location.hash.indexOf("#!/") == 0) {
+		if ("onpopstate" in window) {
 		    if (history.enablePopstate) {
 			var states = JSON.parse(window.sessionStorage.getItem("exhistory.states"));
-			if (states) {
+			if (states && states[location.hash]) {
 			    window.onpopstate({state: states[location.hash]});
 			}
 		    } else {
@@ -40,8 +39,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		    }
 		}
 	    });
-    
-	window.addEventListener("hashchange", historyHashchange, false);
+	if (typeof window.addEventListener === "function") {
+	    window.addEventListener("hashchange", historyHashchange, false);
+	} else {
+	    window.attachEvent("onhashchange", historyHashchange);
+	}
 
 	window.history.pushState = function(data, title, url) {
 	    if (url === ".") {
@@ -64,7 +66,20 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	    history.enablePopstate = false;
 	    location.hash = fullUrl;
 	};
+
+	window.history.replaceState = function(data, title, url) {
+	    if (url === ".") {
+		url = "";
+	    }
+	    document.title = title;
+	    if (window.sessionStorage.getItem("exhistory.states")) {
+		var states = JSON.parse(sessionStorage.getItem("exhistory.states"));
+	    } else {
+		var states = {};
+	    }
+	    states[location.hash] = data;
+	    window.sessionStorage.setItem("exhistory.states", JSON.stringify(states));
+	};
 	
-	window.history.replaceState = window.history.pushState;
     }
 }).call(this);
